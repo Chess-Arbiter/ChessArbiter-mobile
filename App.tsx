@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, BackHandler } from "react-native";
+import { ActivityIndicator, BackHandler, StyleSheet } from "react-native";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { StatusBar } from "expo-status-bar";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { WebView } from "react-native-webview";
 
@@ -51,18 +53,31 @@ const MyWebView = () => {
     } catch (error) { }
   };
 
-  if (loading) {
-    return <ActivityIndicator size="large" />;
-  }
-
   return (
-    <WebView
-      ref={webviewRef}
-      style={{ flex: 1, marginTop: 40 }}
-      source={{ uri: url }}
-      onNavigationStateChange={handleNavigationStateChange}
-    />
+    <SafeAreaView style={styles.container} edges={["top", "bottom", "left", "right"]}>
+      <StatusBar style="dark" />
+      {loading ? (
+        <ActivityIndicator size="large" style={styles.container} />
+      ) : (
+        <WebView
+          ref={webviewRef}
+          style={styles.container}
+          source={{ uri: url }}
+          onNavigationStateChange={handleNavigationStateChange}
+        />
+      )}
+    </SafeAreaView>
   );
 };
 
-export default MyWebView;
+const App = () => (
+  <SafeAreaProvider>
+    <MyWebView />
+  </SafeAreaProvider>
+);
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: "#ffffff" },
+});
+
+export default App;
